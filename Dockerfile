@@ -1,4 +1,5 @@
-FROM fairembodied/habitat-challenge:homerobot-ovmm-challenge-2023
+# FROM fairembodied/habitat-challenge:homerobot-ovmm-challenge-2023
+FROM nvcr.io/nvidia/cuda:11.7.1-cudnn8-devel-ubuntu22.04
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -7,42 +8,42 @@ RUN apt-get update && \
         && rm -rf /var/lib/apt/lists/*
 
 
-# Install git-lfs
-RUN apt-get update && apt-get install -y curl gnupg && \
-    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
-    apt-get install -y git-lfs
+# # Install git-lfs
+# RUN apt-get update && apt-get install -y curl gnupg && \
+#     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+#     apt-get install -y git-lfs
 
 
-# Set git config and pull goat-sim branch from your GitHub repo
-WORKDIR /home-robot
-RUN git fetch && \
-    git config pull.rebase false && \
-    git checkout goat-sim && \
-    git remote add myorigin https://github.com/aminkashiri/SemanticSearch.git && \
-    git pull myorigin goat-sim
+# # Set git config and pull goat-sim branch from your GitHub repo
+# WORKDIR /home-robot
+# RUN git fetch && \
+#     git config pull.rebase false && \
+#     git checkout goat-sim && \
+#     git remote add myorigin https://github.com/aminkashiri/SemanticSearch.git && \
+#     git pull myorigin goat-sim
 
-# Use bash shell for conda activation
-SHELL ["/bin/bash", "-c"]
-ENV CONDA_DEFAULT_ENV=home-robot
+# # Use bash shell for conda activation
+# SHELL ["/bin/bash", "-c"]
+# ENV CONDA_DEFAULT_ENV=home-robot
 
-# Activate conda and install everything
-RUN source /opt/conda/etc/profile.d/conda.sh && \
-    conda activate home-robot && \
-    git submodule update --init --recursive \
-        src/third_party/detectron2 \
-        src/home_robot/home_robot/perception/detection/detic/Detic \
-        src/third_party/contact_graspnet \
-        src/home_robot/home_robot/agent/imagenav_agent/SuperGluePretrainedNetwork/ \
-        src/third_party/habitat-lab/ && \
-    export TORCH_CUDA_ARCH_LIST="8.6" && \
-    pip install -e src/third_party/detectron2 && \
-    pip install -r src/home_robot/home_robot/perception/detection/detic/Detic/requirements.txt && \
-    pip install -e src/third_party/habitat-lab/habitat-lab && \
-    pip install -e src/third_party/habitat-lab/habitat-baselines && \
-    pip install "gym>=0.25" && \
-    pip install bresenham && \
-    pip install gdown && \
-    gdown https://drive.google.com/uc?id=1N0UbpXK3v7oTphC4LoDqlNeMHbrwkbPe
+# # Activate conda and install everything
+# RUN source /opt/conda/etc/profile.d/conda.sh && \
+#     conda activate home-robot && \
+#     git submodule update --init --recursive \
+#         src/third_party/detectron2 \
+#         src/home_robot/home_robot/perception/detection/detic/Detic \
+#         src/third_party/contact_graspnet \
+#         src/home_robot/home_robot/agent/imagenav_agent/SuperGluePretrainedNetwork/ \
+#         src/third_party/habitat-lab/ && \
+#     export TORCH_CUDA_ARCH_LIST="8.6" && \
+#     pip install -e src/third_party/detectron2 && \
+#     pip install -r src/home_robot/home_robot/perception/detection/detic/Detic/requirements.txt && \
+#     pip install -e src/third_party/habitat-lab/habitat-lab && \
+#     pip install -e src/third_party/habitat-lab/habitat-baselines && \
+#     pip install "gym>=0.25" && \
+#     pip install bresenham && \
+#     pip install gdown && \
+#     gdown https://drive.google.com/uc?id=1N0UbpXK3v7oTphC4LoDqlNeMHbrwkbPe
 
 # # Download pretrained Detic model
 # RUN mkdir -p home-robot/src/home_robot/home_robot/perception/detection/detic/Detic/models && \
